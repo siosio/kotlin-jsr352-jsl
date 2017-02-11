@@ -46,6 +46,7 @@ dependencies {
 
 idea.module {
   scopes.PROVIDED.plus += [ configurations.provided ]
+  testOutputDir = sourceSets.test.output.classesDir
 }
 
 sourceSets {
