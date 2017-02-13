@@ -1,26 +1,19 @@
 package siosio.jsr352.jsl
 
 import javax.batch.api.*
-import javax.inject.*
 import kotlin.reflect.*
 
 data class BatchletStep<T : Batchlet>(
     override val name: String,
     override val nextStep: String? = null,
     val batchletClass: KClass<T>
-) : Step {
+) : Step, Properties, Verifier {
 
   init {
-    if (!batchletClass.annotations.any { it is Named }) {
-      throw IllegalArgumentException("batchlet class not have Named annotation. class: ${batchletClass.qualifiedName}")
-    }
+    verifyNamedAnnotation(batchletClass)
   }
 
-  private val properties: MutableList<Property> = mutableListOf()
-
-  fun property(name:String, value:String) {
-    properties.add(Property(name, value))
-  }
+  override val properties: MutableList<Property> = mutableListOf()
 
   override fun build() :String {
     val xml = StringBuilder()
@@ -30,13 +23,7 @@ data class BatchletStep<T : Batchlet>(
       xml.append("<batchlet ref=\"$beanName\" />")
     } else {
       xml.append("<batchlet ref=\"$beanName\">")
-      xml.append("<properties>")
-      properties.map {
-        it.build()
-      }.forEach {
-        xml.append(it)
-      }
-      xml.append("</properties>")
+      xml.append(super.build())
       xml.append("</batchlet>")
     }
     xml.append("</step>")

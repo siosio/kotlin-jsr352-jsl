@@ -47,7 +47,7 @@ class BatchletStepTest {
     assertThatThrownBy {
       job.create()
     }.isInstanceOf(IllegalArgumentException::class.java)
-        .hasMessage("batchlet class not have Named annotation. class: siosio.jsr352.jsl.BatchletStepTest.InvalidBatchldet")
+        .hasMessage("bean class not have Named annotation. class: siosio.jsr352.jsl.BatchletStepTest.InvalidBatchldet")
   }
 
   @Named("batchlet-step")
