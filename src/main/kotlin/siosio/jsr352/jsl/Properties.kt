@@ -1,6 +1,6 @@
 package siosio.jsr352.jsl
 
-interface Properties {
+internal interface Properties {
 
   val properties: MutableList<Property>
 
@@ -9,6 +9,9 @@ interface Properties {
   }
 
   fun build(): String {
+    if (properties.isEmpty()) {
+      return ""
+    }
     val xml = StringBuilder()
     xml.append("<properties>")
     properties.map {

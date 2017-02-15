@@ -21,7 +21,7 @@ class XmlBuildTest {
     //language=XML
     assertThat(job.build())
         .isXmlEqualTo("""
-            <job id="sample" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+            <job id="sample" restartable='true' xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
               <listeners>
                 <listener ref="joblistener-xml" />
               </listeners>
@@ -34,6 +34,7 @@ class XmlBuildTest {
     val job = object : JobBuilder {
       override fun create() =
           job("sample") {
+            property("job-property", "value")
             listener<TestJobListener>() {
               property("key", "value")
               property("key1", "value2")
@@ -44,7 +45,10 @@ class XmlBuildTest {
     //language=XML
     assertThat(job.build())
         .isXmlEqualTo("""
-            <job id="sample" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+            <job id="sample" restartable='true' xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+              <properties>
+                <property name='job-property' value='value'/>
+              </properties>
               <listeners>
                 <listener ref="joblistener-xml">
                   <properties>
@@ -62,13 +66,15 @@ class XmlBuildTest {
     val job = object : JobBuilder {
       override fun create() =
           job("sample-job") {
+            restartable = false
             batchlet<TestBatchlet>("my-step")
           }
     }.create()
 
+    //language=XML
     assertThat(job.build())
         .isXmlEqualTo("""
-            <job id="sample-job" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+            <job id='sample-job' restartable='false' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
               <step id="my-step">
                 <batchlet ref="batchlet-xml" />
               </step>

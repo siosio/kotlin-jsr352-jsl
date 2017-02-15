@@ -17,6 +17,7 @@ open class SampleBatchlet @Inject constructor(
   private lateinit var name:String
 
   override fun process(): String {
+    println("job propertyes: ${jobContext.properties}")
     println("****************************************************************************************************")
     println("${jobContext.jobName} : ${stepContext.stepName}")
     println("name: ${name}")

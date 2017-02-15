@@ -5,6 +5,9 @@ import siosio.jsr352.jsl.*
 class SampleBatchletJob: JobBuilder {
   override fun create(): Job {
     return job("sample") {
+
+      property("job-property", "job-value")
+
       listener<SampleJobListener> {
         property("property", "値")
       }
