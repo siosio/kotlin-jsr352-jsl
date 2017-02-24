@@ -12,16 +12,16 @@ class SampleJobListener @Inject constructor(
     private val jobContext: JobContext
 ) : AbstractJobListener() {
 
-  @BatchProperty
-  @Inject
-  private lateinit var property: String
+    @BatchProperty
+    @Inject
+    private lateinit var property: String
 
-  override fun beforeJob() {
-    println("${jobContext.jobName} start!!!!!!!!!!!")
-    println("********** ${property} **********")
-  }
+    override fun beforeJob() {
+        println("${jobContext.jobName} start!!!!!!!!!!!")
+        println("********** ${property} **********")
+    }
 
-  override fun afterJob() {
-    println("${jobContext.jobName} end!!!!!!!!!!!")
-  }
+    override fun afterJob() {
+        println("${jobContext.jobName} end!!!!!!!!!!!")
+    }
 }

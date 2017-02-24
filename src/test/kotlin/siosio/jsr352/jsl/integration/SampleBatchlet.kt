@@ -12,15 +12,15 @@ open class SampleBatchlet @Inject constructor(
     private val stepContext: StepContext
 ) : AbstractBatchlet() {
 
-  @Inject
-  @BatchProperty
-  private lateinit var name:String
+    @Inject
+    @BatchProperty
+    private lateinit var name: String
 
-  override fun process(): String {
-    println("job propertyes: ${jobContext.properties}")
-    println("****************************************************************************************************")
-    println("${jobContext.jobName} : ${stepContext.stepName}")
-    println("name: ${name}")
-    return "ok"
-  }
+    override fun process(): String {
+        println("job propertyes: ${jobContext.properties}")
+        println("****************************************************************************************************")
+        println("${jobContext.jobName} : ${stepContext.stepName}")
+        println("name: ${name}")
+        return "ok"
+    }
 }

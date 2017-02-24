@@ -9,24 +9,24 @@ data class BatchletStep<T : Batchlet>(
     val batchletClass: KClass<T>
 ) : Step, Properties, Verifier {
 
-  init {
-    verifyNamedAnnotation(batchletClass)
-  }
-
-  override val properties: MutableList<Property> = mutableListOf()
-
-  override fun build() :String {
-    val xml = StringBuilder()
-    xml.append("<step id=\"${name}\">")
-    val beanName = beanName(batchletClass)
-    if (properties.isEmpty()) {
-      xml.append("<batchlet ref=\"$beanName\" />")
-    } else {
-      xml.append("<batchlet ref=\"$beanName\">")
-      xml.append(super.build())
-      xml.append("</batchlet>")
+    init {
+        verifyNamedAnnotation(batchletClass)
     }
-    xml.append("</step>")
-    return xml.toString()
-  }
+
+    override val properties: MutableList<Property> = mutableListOf()
+
+    override fun build(): String {
+        val xml = StringBuilder()
+        xml.append("<step id=\"${name}\">")
+        val beanName = beanName(batchletClass)
+        if (properties.isEmpty()) {
+            xml.append("<batchlet ref='$beanName' />")
+        } else {
+            xml.append("<batchlet ref='$beanName'>")
+            xml.append(super.build())
+            xml.append("</batchlet>")
+        }
+        xml.append("</step>")
+        return xml.toString()
+    }
 }

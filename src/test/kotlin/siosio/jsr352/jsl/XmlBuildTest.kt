@@ -12,11 +12,11 @@ class XmlBuildTest {
   @Test
   fun jobLevelListener() {
     val job = object : JobBuilder {
-      override fun create() =
+      override fun job() =
           job("sample") {
             listener<TestJobListener>()
           }
-    }.create()
+    }.job()
 
     //language=XML
     assertThat(job.build())
@@ -32,7 +32,7 @@ class XmlBuildTest {
   @Test
   fun jobLevelListenerWithProperty() {
     val job = object : JobBuilder {
-      override fun create() =
+      override fun job() =
           job("sample") {
             property("job-property", "value")
             listener<TestJobListener>() {
@@ -40,7 +40,7 @@ class XmlBuildTest {
               property("key1", "value2")
             }
           }
-    }.create()
+    }.job()
 
     //language=XML
     assertThat(job.build())
@@ -64,12 +64,12 @@ class XmlBuildTest {
   @Test
   fun batchletStep() {
     val job = object : JobBuilder {
-      override fun create() =
+      override fun job() =
           job("sample-job") {
             restartable = false
             batchlet<TestBatchlet>("my-step")
           }
-    }.create()
+    }.job()
 
     //language=XML
     assertThat(job.build())

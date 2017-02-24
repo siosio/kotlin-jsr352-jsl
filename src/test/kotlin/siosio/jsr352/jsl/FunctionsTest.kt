@@ -6,15 +6,15 @@ import javax.inject.*
 
 class FunctionsTest {
 
-  @Test
-  fun beanNameTest() {
-    assertThat(beanName(Hoge::class)).isEqualTo("hoge")
-    assertThat(beanName(Fuga::class)).isEqualTo("fuga-bean")
-  }
+    @Test
+    fun beanNameTest() {
+        assertThat(beanName(Hoge::class)).isEqualTo("hoge")
+        assertThat(beanName(Fuga::class)).isEqualTo("fuga-bean")
+    }
 
-  @Named
-  class Hoge
+    @Named
+    class Hoge
 
-  @Named(value = "fuga-bean")
-  class Fuga
+    @Named(value = "fuga-bean")
+    class Fuga
 }

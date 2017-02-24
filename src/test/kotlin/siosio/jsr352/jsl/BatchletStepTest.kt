@@ -12,14 +12,14 @@ class BatchletStepTest {
   @Test
   fun `defineBatchletStep`() {
     val job = object : JobBuilder {
-      override fun create() =
+      override fun job() =
           job("sample-job") {
             batchlet<TestBatchlet>("test-step") {
               property("key1", "value1")
               property("key2", "value2")
             }
           }
-    }.create()
+    }.job()
 
     assertThat(job)
         .hasFieldOrPropertyWithValue("id", "sample-job")
@@ -38,14 +38,14 @@ class BatchletStepTest {
   @Test
   fun withoutNamedAnnotation_shouldThrowException() {
     val job: JobBuilder = object : JobBuilder {
-      override fun create(): Job =
+      override fun job(): Job =
           job("invalid-job") {
             batchlet<InvalidBatchldet>(name = "invalid") {}
           }
     }
 
     assertThatThrownBy {
-      job.create()
+      job.job()
     }.isInstanceOf(IllegalArgumentException::class.java)
         .hasMessage("bean class not have Named annotation. class: siosio.jsr352.jsl.BatchletStepTest.InvalidBatchldet")
   }
