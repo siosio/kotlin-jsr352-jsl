@@ -2,6 +2,7 @@ package siosio.jsr352.jsl
 
 import javax.batch.api.*
 import javax.batch.api.listener.*
+import kotlin.reflect.*
 
 class Job(val id: String) : Properties {
 
@@ -12,7 +13,7 @@ class Job(val id: String) : Properties {
     var steps: MutableList<Step> = mutableListOf()
 
     /** job level listeners */
-    var listeners: MutableList<JobLevelListener<*>> = mutableListOf()
+    var listeners: Listeners<JobLevelListener> = Listeners()
 
     /** restartable atribute(default true) */
     var restartable: Boolean = true
@@ -23,46 +24,40 @@ class Job(val id: String) : Properties {
     }
 
     /** add job level listener with body */
-    inline fun <reified T : JobListener> listener(init: JobLevelListener<*>.() -> Unit) {
+    inline fun <reified T : JobListener> listener(init: JobLevelListener.() -> Unit) {
         val jobLevelListener = JobLevelListener(T::class)
         jobLevelListener.init()
         listeners.add(jobLevelListener)
     }
 
-    inline fun <reified T : Batchlet> batchlet(name: String) {
-        batchlet<T>(name) {}
+    // ****************************** batchlet
+    inline fun <reified T : Batchlet> batchlet(name: String, nextStep: String? = null) {
+        batchlet<T>(name, nextStep) {}
     }
 
-    inline fun <reified T : Batchlet> batchlet(name: String, init: BatchletStep<*>.() -> Unit) {
+    inline fun <reified T : Batchlet> batchlet(name: String, nextStep: String? = null, init: BatchletStep<*>.() -> Unit) {
         val step = BatchletStep(
             name = name,
+            nextStep = nextStep,
             batchletClass = T::class)
         step.init()
         steps.add(step)
     }
 
-    override fun build(): String {
-        val xml = StringBuilder()
-        xml.append("<job id='${id}' restartable='$restartable' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>")
-        xml.append(super<Properties>.build())
-        xml.append(buildListener())
-        xml.append(buildStep())
-        xml.append("</job>")
-        return xml.toString()
+    // ****************************** chunk
+    fun chunk(name: String, next: String? = null, init: ChunkStep.() -> Unit) {
+        val step = ChunkStep(name)
+        step.init()
+        steps.add(step)
     }
 
-    private fun buildListener(): String {
-        if (listeners.isEmpty()) {
-            return ""
-        }
+    fun build(): String {
         val xml = StringBuilder()
-        xml.append("<listeners>")
-        listeners.map {
-            it.build()
-        }.forEach {
-            xml.append(it)
-        }
-        xml.append("</listeners>")
+        xml.append("<job id='${id}' restartable='$restartable' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>")
+        xml.append(buildProperties())
+        xml.append(listeners.buildListeners())
+        xml.append(buildStep())
+        xml.append("</job>")
         return xml.toString()
     }
 

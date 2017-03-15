@@ -1,5 +1,6 @@
 package siosio.jsr352.jsl.integration
 
+import org.jboss.logging.*
 import javax.batch.api.*
 import javax.batch.runtime.context.*
 import javax.enterprise.context.*
@@ -16,11 +17,13 @@ open class SampleBatchlet @Inject constructor(
     @BatchProperty
     private lateinit var name: String
 
+    private val log:Logger = Logger.getLogger(SampleBatchlet::class.java)
+
     override fun process(): String {
-        println("job propertyes: ${jobContext.properties}")
-        println("****************************************************************************************************")
-        println("${jobContext.jobName} : ${stepContext.stepName}")
-        println("name: ${name}")
+        log.infov("job propertyes: ${jobContext.properties}")
+        log.infov("****************************************************************************************************")
+        log.infov("${jobContext.jobName} : ${stepContext.stepName}")
+        log.infov("name: ${name}")
         return "ok"
     }
 }

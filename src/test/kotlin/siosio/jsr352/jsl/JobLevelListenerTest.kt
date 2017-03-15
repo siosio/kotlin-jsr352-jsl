@@ -16,7 +16,7 @@ class JobLevelListenerTest {
                 }
         }.job()
 
-        assertThat(job.listeners)
+        assertThat(job.listeners.listeners)
             .hasSize(1)
             .element(0)
             .hasFieldOrPropertyWithValue("listener", JobListenerTest1::class)
@@ -34,7 +34,7 @@ class JobLevelListenerTest {
                 }
         }.job()
 
-        assertThat(job.listeners)
+        assertThat(job.listeners.listeners)
             .hasSize(1)
             .element(0)
             .hasFieldOrPropertyWithValue("listener", JobListenerTest1::class)

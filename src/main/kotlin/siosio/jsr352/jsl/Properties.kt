@@ -1,6 +1,6 @@
 package siosio.jsr352.jsl
 
-internal interface Properties {
+interface Properties {
 
     val properties: MutableList<Property>
 
@@ -8,7 +8,7 @@ internal interface Properties {
         properties.add(Property(name, value))
     }
 
-    fun build(): String {
+    fun buildProperties(): String {
         if (properties.isEmpty()) {
             return ""
         }
