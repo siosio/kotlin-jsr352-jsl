@@ -1,25 +1,72 @@
 package siosio.jsr352.jsl
 
 import javax.batch.api.chunk.*
-import kotlin.reflect.*
 
 class ChunkStep(
     val name: String,
-    val nextStep: String? = null,
-    val allowStartIfComplete: Boolean = false
+    nextStep: String? = null,
+    allowStartIfComplete: Boolean = false
 ) : Step(name, nextStep, allowStartIfComplete), Verifier {
 
     var itemCount: Int = 10
+    var timeLimit: Int = 0
+    var skipLimit: Int? = null
+    var retryLimit: Int? = null
 
-    var reader: KClass<out ItemReader>? = null
+    var reader: Item<out ItemReader>? = null
+    var writer: Item<out ItemWriter>? = null
 
     inline fun <reified T : ItemReader> reader() {
-        val kClass = T::class
-        verifyNamedAnnotation(kClass)
-        this.reader = kClass
+        reader<T> {}
+    }
+
+    inline fun <reified T : ItemReader> reader(body: Item<out ItemReader>.() -> Unit) {
+        val readerClass = T::class
+        verifyNamedAnnotation(readerClass)
+        val item = Item("reader", readerClass)
+        item.body()
+        this.reader = item
+    }
+
+    inline fun <reified T : ItemWriter> writer() {
+        writer<T> {}
+    }
+
+    inline fun <reified T : ItemWriter> writer(body: Item<out ItemWriter>.() -> Unit) {
+        val writerClass = T::class
+        verifyNamedAnnotation(writerClass)
+        val item = Item("writer", writerClass)
+        item.body()
+        this.writer = item
     }
 
     override fun buildBody(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        verify()
+        val xml = StringBuilder()
+        xml.append("<chunk item-count='$itemCount' time-limit='$timeLimit' ${buildSkipLimit()} ${buildRetryLimit()}>")
+        xml.append(reader!!.buildItem())
+        xml.append(writer!!.buildItem())
+        xml.append("</chunk>")
+        return xml.toString()
     }
+
+    private fun buildSkipLimit() =
+        skipLimit?.let {
+            "skip-limit='$skipLimit'"
+        } ?: ""
+
+    private fun buildRetryLimit() =
+          retryLimit?.let {
+              "retry-limit='$retryLimit'"
+          } ?: ""
+
+    private fun verify() {
+        if (reader == null) {
+            throw IllegalStateException("reader mut be set.")
+        }
+        if (writer == null) {
+            throw IllegalStateException("writer mut be set.")
+        }
+    }
+
 }

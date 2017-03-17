@@ -8,7 +8,9 @@ abstract class Step(
 
     fun build(): String {
         val xml = StringBuilder()
-        xml.append("<step id=\"${name}\" ${nextStep?.let { "next='$it'" } ?: ""}>")
+        xml.append("<step id=\"${name}\"" +
+            " ${nextStep?.let { "next='$it'" } ?: ""}" +
+            " allow-start-if-complete='${allowStartIfComplete}'>")
         xml.append(buildBody())
         xml.append("</step>")
         return xml.toString()

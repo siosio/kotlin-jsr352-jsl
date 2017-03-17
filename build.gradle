@@ -2,7 +2,7 @@ group 'siosio'
 version '1.0-SNAPSHOT'
 
 buildscript {
-  ext.kotlin_version = '1.1.0'
+  ext.kotlin_version = '1.1.1'
 
   repositories {
     mavenCentral()
@@ -55,3 +55,6 @@ sourceSets {
   test.runtimeClasspath += configurations.provided
 }
 
+task wrapper(type: Wrapper) {
+  gradleVersion = '3.4'
+}

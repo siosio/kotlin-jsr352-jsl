@@ -14,8 +14,11 @@ class ChunkStepTest {
                 job("sample-job") {
                     chunk("chunk-step") {
                         itemCount = 100
-
+                        timeLimit = 1000
+                        skipLimit = 2
+                        retryLimit = 3
                         reader<TestReader>()
+                        writer<TestWriter>()
                     }
                 }
         }.job()
@@ -26,14 +29,77 @@ class ChunkStepTest {
         assertThat(job.steps.first())
             .hasFieldOrPropertyWithValue("name", "chunk-step")
             .hasFieldOrPropertyWithValue("itemCount", 100)
-            .hasFieldOrPropertyWithValue("reader", TestReader::class)
+            .hasFieldOrPropertyWithValue("timeLimit", 1000)
+            .hasFieldOrPropertyWithValue("skipLimit", 2)
+            .hasFieldOrPropertyWithValue("reader", Item("reader", TestReader::class))
+            .hasFieldOrPropertyWithValue("writer", Item("writer", TestWriter::class))
 
+        val xml = job.build()
+        assertThat(xml)
+            // language=xml
+            .isXmlEqualTo("""
+            <job id='sample-job' restartable='true' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
+              <step id="chunk-step" allow-start-if-complete='false' >
+                <chunk item-count='100' time-limit='1000' skip-limit='2' retry-limit='3'>
+                  <reader ref='test-reader' />
+                  <writer ref='test-writer' />
+                </chunk>
+              </step>
+            </job>
+            """)
+    }
+
+    @Test
+    fun readerAndWriterWithProperties() {
+        val job = object : JobBuilder {
+            override fun job() =
+                job("sample-job") {
+                    chunk("chunk-step") {
+                        reader<TestReader> {
+                            property("key", "value")
+                        }
+
+                        writer<TestWriter> {
+                            property("key2", "value2")
+                        }
+                    }
+                }
+        }.job()
+
+        assertThat(job.build())
+            // language=xml
+            .isXmlEqualTo("""
+            <job id='sample-job' restartable='true' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
+              <step id="chunk-step" allow-start-if-complete='false'>
+                <chunk item-count='10' time-limit='0'>
+                  <reader ref='test-reader'>
+                    <properties>
+                      <property name='key' value='value' />
+                    </properties>
+                  </reader>
+                  <writer ref='test-writer'>
+                    <properties>
+                      <property name='key2' value='value2' />
+                    </properties>
+                  </writer>
+                </chunk>
+              </step>
+            </job>
+            """)
     }
 
     @Named("test-reader")
-    class TestReader: AbstractItemReader() {
+    class TestReader : AbstractItemReader() {
         override fun readItem(): Any {
             TODO("not implemented")
         }
+    }
+
+    @Named("test-writer")
+    class TestWriter : AbstractItemWriter() {
+        override fun writeItems(items: MutableList<Any>?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
     }
 }

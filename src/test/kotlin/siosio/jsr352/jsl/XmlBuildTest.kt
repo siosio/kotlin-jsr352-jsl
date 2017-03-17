@@ -75,7 +75,7 @@ class XmlBuildTest {
     assertThat(job.build())
         .isXmlEqualTo("""
             <job id='sample-job' restartable='false' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
-              <step id="my-step">
+              <step allow-start-if-complete="false" id="my-step">
                 <batchlet ref="batchlet-xml" />
               </step>
             </job>

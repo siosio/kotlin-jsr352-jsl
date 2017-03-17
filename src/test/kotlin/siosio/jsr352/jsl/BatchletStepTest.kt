@@ -1,9 +1,7 @@
 package siosio.jsr352.jsl
 
-import org.assertj.core.api.*
 import org.assertj.core.api.Assertions.*
 import org.junit.*
-import java.util.function.*
 import javax.batch.api.*
 import javax.enterprise.context.*
 import javax.inject.*

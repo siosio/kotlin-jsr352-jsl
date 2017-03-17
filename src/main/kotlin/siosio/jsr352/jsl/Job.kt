@@ -46,7 +46,10 @@ class Job(val id: String) : Properties {
 
     // ****************************** chunk
     fun chunk(name: String, next: String? = null, init: ChunkStep.() -> Unit) {
-        val step = ChunkStep(name)
+        val step = ChunkStep(
+            name = name,
+            nextStep = next
+        )
         step.init()
         steps.add(step)
     }
