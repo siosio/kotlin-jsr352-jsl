@@ -18,6 +18,7 @@ class ChunkStepTest {
                         skipLimit = 2
                         retryLimit = 3
                         reader<TestReader>()
+                        processor<TestProcessor>()
                         writer<TestWriter>()
                     }
                 }
@@ -32,6 +33,7 @@ class ChunkStepTest {
             .hasFieldOrPropertyWithValue("timeLimit", 1000)
             .hasFieldOrPropertyWithValue("skipLimit", 2)
             .hasFieldOrPropertyWithValue("reader", Item("reader", TestReader::class))
+            .hasFieldOrPropertyWithValue("processor", Item("processor", TestProcessor::class))
             .hasFieldOrPropertyWithValue("writer", Item("writer", TestWriter::class))
 
         val xml = job.build()
@@ -42,6 +44,7 @@ class ChunkStepTest {
               <step id="chunk-step" allow-start-if-complete='false' >
                 <chunk item-count='100' time-limit='1000' skip-limit='2' retry-limit='3'>
                   <reader ref='test-reader' />
+                  <processor ref='test-processor' />
                   <writer ref='test-writer' />
                 </chunk>
               </step>
@@ -57,6 +60,10 @@ class ChunkStepTest {
                     chunk("chunk-step") {
                         reader<TestReader> {
                             property("key", "value")
+                        }
+
+                        processor<TestProcessor> {
+                            property("prop", "prop-value")
                         }
 
                         writer<TestWriter> {
@@ -77,6 +84,11 @@ class ChunkStepTest {
                       <property name='key' value='value' />
                     </properties>
                   </reader>
+                  <processor ref='test-processor'>
+                    <properties>
+                      <property name='prop' value='prop-value' />
+                    </properties>
+                  </processor>
                   <writer ref='test-writer'>
                     <properties>
                       <property name='key2' value='value2' />
@@ -98,6 +110,14 @@ class ChunkStepTest {
     @Named("test-writer")
     class TestWriter : AbstractItemWriter() {
         override fun writeItems(items: MutableList<Any>?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+    }
+
+    @Named("test-processor")
+    class TestProcessor : ItemProcessor {
+        override fun processItem(item: Any?): Any {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
