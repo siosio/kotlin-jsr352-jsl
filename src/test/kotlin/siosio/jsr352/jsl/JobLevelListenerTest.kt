@@ -10,11 +10,12 @@ class JobLevelListenerTest {
     @Test
     fun defineJobLevelListener() {
         val job = object : JobBuilder {
-            override fun job() =
-                job("sample") {
-                    listener<JobListenerTest1>()
-                }
-        }.job()
+          override val job: Job
+            get() =
+            job("sample") {
+              listener<JobListenerTest1>()
+            }
+        }.job
 
         assertThat(job.listeners.listeners)
             .hasSize(1)
@@ -25,14 +26,15 @@ class JobLevelListenerTest {
     @Test
     fun defineJobLevelListenerAndProperty() {
         val job = object : JobBuilder {
-            override fun job() =
-                job("sample") {
-                    listener<JobListenerTest1> {
-                        property("key", "value")
-                        property("key2", "value2")
-                    }
-                }
-        }.job()
+          override val job: Job
+            get() =
+            job("sample") {
+              listener<JobListenerTest1> {
+                property("key", "value")
+                property("key2", "value2")
+              }
+            }
+        }.job
 
         assertThat(job.listeners.listeners)
             .hasSize(1)
@@ -44,14 +46,15 @@ class JobLevelListenerTest {
     @Test
     fun withoutNamedAnnotation_shouldThrowException() {
         val jobBuilder = object : JobBuilder {
-            override fun job() =
-                job("sample") {
-                    listener<InvalidJobListener>()
-                }
+          override val job: Job
+            get() =
+            job("sample") {
+              listener<InvalidJobListener>()
+            }
         }
 
         assertThatThrownBy {
-            jobBuilder.job()
+            jobBuilder.job
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("bean class not have Named annotation. class: ${InvalidJobListener::class.qualifiedName}")
     }

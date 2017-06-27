@@ -12,14 +12,15 @@ class BatchletStepTest {
     @Test
     fun `defineBatchletStep`() {
         val job = object : JobBuilder {
-            override fun job() =
-                job("sample-job") {
-                    batchlet<TestBatchlet>("test-step") {
-                        property("key1", "value1")
-                        property("key2", "value2")
-                    }
-                }
-        }.job()
+          override val job: Job
+            get() =
+            job("sample-job") {
+              batchlet<TestBatchlet>("test-step") {
+                property("key1", "value1")
+                property("key2", "value2")
+              }
+            }
+        }.job
 
         assertThat(job)
             .hasFieldOrPropertyWithValue("id", "sample-job")
@@ -38,17 +39,18 @@ class BatchletStepTest {
     @Test
     fun specifiedNextStep() {
         val job = object : JobBuilder {
-            override fun job(): Job =
-                job("multi-step") {
-                    batchlet<TestBatchlet>(
-                        name = "first",
-                        nextStep = "second") {
-                        property("key", "value")
-                    }
+          override val job: Job
+            get() =
+            job("multi-step") {
+              batchlet<TestBatchlet>(
+                  name = "first",
+                  nextStep = "second") {
+                property("key", "value")
+              }
 
-                    batchlet<TestBatchlet>("second")
-                }
-        }.job()
+              batchlet<TestBatchlet>("second")
+            }
+        }.job
 
         assertThat(job)
             .hasFieldOrPropertyWithValue("id", "multi-step")
@@ -74,14 +76,15 @@ class BatchletStepTest {
     @Test
     fun withoutNamedAnnotation_shouldThrowException() {
         val job: JobBuilder = object : JobBuilder {
-            override fun job(): Job =
-                job("invalid-job") {
-                    batchlet<InvalidBatchldet>(name = "invalid") {}
-                }
+          override val job: Job
+            get() =
+            job("invalid-job") {
+              batchlet<InvalidBatchldet>(name = "invalid") {}
+            }
         }
 
         assertThatThrownBy {
-            job.job()
+            job.job
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("bean class not have Named annotation. class: siosio.jsr352.jsl.BatchletStepTest.InvalidBatchldet")
     }

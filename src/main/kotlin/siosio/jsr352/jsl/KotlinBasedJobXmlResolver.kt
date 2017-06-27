@@ -10,7 +10,7 @@ class KotlinBasedJobXmlResolver : AbstractJobXmlResolver() {
         val instance = classLoader.loadClass(jobDefinitionClass).newInstance()
 
         return if (instance is JobBuilder) {
-            ByteArrayInputStream(instance.job().build().toByteArray())
+            ByteArrayInputStream(instance.job.build().toByteArray())
         } else {
             throw IllegalArgumentException("")
         }

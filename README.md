@@ -7,7 +7,7 @@ package sample
 import siosio.jsr352.jsl.*
 
 class SampleBatchletJob : JobBuilder {
-    override fun job() = job("sample") {
+    override val job: Job = job("sample") {
         property("job-property", "job-value")
 
         listener<SampleJobListener> {

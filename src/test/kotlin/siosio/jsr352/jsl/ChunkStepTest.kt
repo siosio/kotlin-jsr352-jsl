@@ -10,19 +10,20 @@ class ChunkStepTest {
     @Test
     fun readerAndWriter() {
         val job = object : JobBuilder {
-            override fun job() =
-                job("sample-job") {
-                    chunk("chunk-step") {
-                        itemCount = 100
-                        timeLimit = 1000
-                        skipLimit = 2
-                        retryLimit = 3
-                        reader<TestReader>()
-                        processor<TestProcessor>()
-                        writer<TestWriter>()
-                    }
-                }
-        }.job()
+          override val job: Job
+            get() =
+            job("sample-job") {
+              chunk("chunk-step") {
+                itemCount = 100
+                timeLimit = 1000
+                skipLimit = 2
+                retryLimit = 3
+                reader<TestReader>()
+                processor<TestProcessor>()
+                writer<TestWriter>()
+              }
+            }
+        }.job
 
         assertThat(job)
             .hasFieldOrPropertyWithValue("id", "sample-job")
@@ -55,23 +56,24 @@ class ChunkStepTest {
     @Test
     fun readerAndWriterWithProperties() {
         val job = object : JobBuilder {
-            override fun job() =
-                job("sample-job") {
-                    chunk("chunk-step") {
-                        reader<TestReader> {
-                            property("key", "value")
-                        }
-
-                        processor<TestProcessor> {
-                            property("prop", "prop-value")
-                        }
-
-                        writer<TestWriter> {
-                            property("key2", "value2")
-                        }
-                    }
+          override val job: Job
+            get() =
+            job("sample-job") {
+              chunk("chunk-step") {
+                reader<TestReader> {
+                  property("key", "value")
                 }
-        }.job()
+
+                processor<TestProcessor> {
+                  property("prop", "prop-value")
+                }
+
+                writer<TestWriter> {
+                  property("key2", "value2")
+                }
+              }
+            }
+        }.job
 
         assertThat(job.build())
             // language=xml

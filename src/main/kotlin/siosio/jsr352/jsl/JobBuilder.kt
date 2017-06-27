@@ -8,5 +8,5 @@ interface JobBuilder {
         return job
     }
 
-    fun job(): Job
+    val job: Job
 }
