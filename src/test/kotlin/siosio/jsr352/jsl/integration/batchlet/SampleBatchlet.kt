@@ -1,4 +1,4 @@
-package siosio.jsr352.jsl.integration
+package siosio.jsr352.jsl.integration.batchlet
 
 import org.jboss.logging.*
 import javax.batch.api.*

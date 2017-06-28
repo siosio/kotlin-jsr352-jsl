@@ -1,4 +1,4 @@
-package siosio.jsr352.jsl.integration
+package siosio.jsr352.jsl.integration.batchlet
 
 import siosio.jsr352.jsl.*
 
