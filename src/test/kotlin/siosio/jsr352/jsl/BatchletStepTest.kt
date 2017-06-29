@@ -18,6 +18,10 @@ class BatchletStepTest {
                     batchlet<TestBatchlet>("test-step") {
                         property("key1", "value1")
                         property("key2", "value2")
+
+                        end {
+                            on = "*"
+                        }
                     }
                 }
         }.job
@@ -32,6 +36,7 @@ class BatchletStepTest {
                         Property("key1", "value1"),
                         Property("key2", "value2"))
                 )
+                .hasFieldOrPropertyWithValue("end", End("*"))
                 .extracting("name", "nextStep", "batchletClass")
                 .containsExactly("test-step", null, TestBatchlet::class)
     }

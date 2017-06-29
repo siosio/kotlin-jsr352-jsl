@@ -6,7 +6,17 @@ abstract class Step(
         private val allowStartIfComplete: Boolean
 ) {
 
-    var end: String? = null
+    private var end: End? = null
+
+    fun end(init: End.() -> Unit) {
+        end = End("").let {
+            it.init()
+            if (it.on.isNullOrEmpty()) {
+                throw IllegalArgumentException("must be set 'on' value.")
+            }
+            it
+        }
+    }
 
     fun build(): String {
         val xml = StringBuilder()
@@ -14,9 +24,22 @@ abstract class Step(
                 " ${nextStep?.let { "next='$it'" } ?: ""}" +
                 " allow-start-if-complete='${allowStartIfComplete}'>")
         xml.append(buildBody())
+        end?.let {
+            xml.append("<end on='${it.on}' ${
+            if (it.exitStatus.isNotEmpty()) {
+                "exit-status='" + it.exitStatus + "'"
+            } else {
+                ""
+            }} />")
+        }
         xml.append("</step>")
         return xml.toString()
     }
 
     abstract fun buildBody(): String
 }
+
+data class End(
+        var on: String,
+        var exitStatus: String = ""
+)

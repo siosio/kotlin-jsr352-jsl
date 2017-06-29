@@ -71,7 +71,12 @@ class XmlBuildTest {
                 get() =
                 job("sample-job") {
                     restartable = false
-                    batchlet<TestBatchlet>("my-step")
+                    batchlet<TestBatchlet>("my-step") {
+                        end {
+                            on = "*"
+                            exitStatus = "fail"
+                        }
+                    }
                 }
         }.job
 
@@ -81,6 +86,7 @@ class XmlBuildTest {
             <job id='sample-job' restartable='false' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
               <step allow-start-if-complete="false" id="my-step">
                 <batchlet ref="batchlet-xml" />
+                <end on='*' exit-status='fail' />
               </step>
             </job>
         """)
