@@ -9,7 +9,8 @@ class MultiStepJob : JobBuilder {
             batchlet<MultiStepBatchlet>(
                     name = "1",
                     nextStep = "2"
-            )
+            ) {
+            }
 
             batchlet<MultiStepBatchlet>(
                     name = "2"
