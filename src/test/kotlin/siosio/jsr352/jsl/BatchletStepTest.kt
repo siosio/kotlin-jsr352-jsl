@@ -19,9 +19,9 @@ class BatchletStepTest {
                         property("key1", "value1")
                         property("key2", "value2")
 
-                        end {
-                            on = "*"
-                        }
+                        end(on = "*")
+                        fail(on = "fail", exitStatus = "failed")
+                        stop(on = "stop", restart = "step3")
                     }
                 }
         }.job
@@ -36,7 +36,8 @@ class BatchletStepTest {
                         Property("key1", "value1"),
                         Property("key2", "value2"))
                 )
-                .hasFieldOrPropertyWithValue("end", End("*"))
+                .hasFieldOrPropertyWithValue("end", Transition("end", "*", null))
+                .hasFieldOrPropertyWithValue("fail", Transition("fail", "fail", "failed"))
                 .extracting("name", "nextStep", "batchletClass")
                 .containsExactly("test-step", null, TestBatchlet::class)
     }

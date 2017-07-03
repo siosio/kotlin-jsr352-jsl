@@ -20,7 +20,7 @@ open class SampleBatchlet @Inject constructor(
     private val log:Logger = Logger.getLogger(SampleBatchlet::class.java)
 
     override fun process(): String {
-        log.infov("job propertyes: ${jobContext.properties}")
+        log.infov("job properties: ${jobContext.properties}")
         log.infov("****************************************************************************************************")
         log.infov("${jobContext.jobName} : ${stepContext.stepName}")
         log.infov("name: ${name}")

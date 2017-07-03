@@ -14,9 +14,9 @@ class SampleBatchletJob : JobBuilder {
             batchlet<SampleBatchlet>(name = "my-step", nextStep = "next-step") {
                 property("name", "hoge")
 
-                end {
-                    on = "ok"
-                }
+                end(on = "ok", exitStatus = "end")
+                fail(on = "failed", exitStatus = "failed")
+                stop(on = "stop", exitStatus = "stop", restart = "restart-step")
             }
 
             batchlet<SampleBatchlet2>("next-step")

@@ -22,6 +22,6 @@ class SampleJobListener @Inject constructor(
     }
 
     override fun afterJob() {
-        println("${jobContext.jobName} end!!!!!!!!!!!")
+        println("${jobContext.jobName} end!!!!!!!!!!! ${jobContext.batchStatus} : ${jobContext.exitStatus}")
     }
 }
