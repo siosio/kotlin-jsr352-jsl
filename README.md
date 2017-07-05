@@ -14,13 +14,16 @@ class SampleBatchletJob : JobBuilder {
             property("property", "値")
         }
 
-        batchlet<SampleBatchlet>(
-            name = "my-step",
-            nextStep = "next-step") {
-            property("name", "hoge")
+        step(name = "my-step", next = "next-step") {
+            batchlet<SampleBatchlet> {
+              property("name", "hoge")
+            }
+        
         }
-
-        batchlet<SampleBatchlet2>("next-step")
+        
+        step(name = "next-step") {
+          batchlet<SampleBatchlet2>()
+        }
     }
 }
 ```
