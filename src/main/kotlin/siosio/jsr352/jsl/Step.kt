@@ -6,7 +6,7 @@ abstract class Step(
         private val name: String,
         private val nextStep: String?,
         private val allowStartIfComplete: Boolean
-) {
+) : Element {
 
     private var end: Transition? = null
     private var fail: Transition? = null
@@ -24,7 +24,7 @@ abstract class Step(
         stop = Stop(on, restart, exitStatus)
     }
 
-    fun build(): String {
+    override fun build(): String {
         val xml = StringBuilder()
         xml.append("<step id=\"${name}\"" +
                 " ${nextStep?.let { "next='$it'" } ?: ""}" +

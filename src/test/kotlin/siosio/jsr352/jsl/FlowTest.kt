@@ -32,12 +32,12 @@ class FlowTest {
                 }
         }.job
 
-        assertThat(job.flows)
+        assertThat(job.elements)
                 .hasSize(2)
-        assertThat(job.flows[0])
+        assertThat(job.elements[0])
                 .hasFieldOrPropertyWithValue("name", "flow")
                 .hasFieldOrPropertyWithValue("next", "flow2")
-        assertThat(job.flows[1])
+        assertThat(job.elements[1])
                 .hasFieldOrPropertyWithValue("name", "flow2")
                 .hasFieldOrPropertyWithValue("next", null)
 

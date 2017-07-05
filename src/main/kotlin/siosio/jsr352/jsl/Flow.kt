@@ -1,17 +1,17 @@
 package siosio.jsr352.jsl
 
-class Flow(val name: String, val next: String? = null) {
+class Flow(val name: String, val next: String? = null) : Element {
 
-    private val steps: StepHolder = StepHolder()
+    private val elemens: ElementHolder = ElementHolder()
 
     internal fun addStep(step: Step) {
-        steps.add(step)
+        elemens.add(step)
     }
 
-    fun build(): String {
+    override fun build(): String {
         val sb = StringBuilder()
         sb.append("<flow id='${name}' ${next?.let { "next='${it}'" } ?: ""}>")
-        sb.append(steps.buildStep())
+        sb.append(elemens.build())
         sb.append("</flow>")
 
         return sb.toString()

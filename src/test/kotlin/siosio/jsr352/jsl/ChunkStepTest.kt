@@ -30,7 +30,7 @@ class ChunkStepTest {
         assertThat(job)
                 .hasFieldOrPropertyWithValue("id", "sample-job")
 
-        assertThat(job.steps.first())
+        assertThat(job.elements.first())
                 .hasFieldOrPropertyWithValue("name", "chunk-step")
                 .hasFieldOrPropertyWithValue("itemCount", 100)
                 .hasFieldOrPropertyWithValue("timeLimit", 1000)

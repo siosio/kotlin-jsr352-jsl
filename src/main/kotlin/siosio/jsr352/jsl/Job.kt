@@ -13,11 +13,8 @@ class Job(val id: String) : Properties {
     /** restartable atribute(default true) */
     var restartable: Boolean = true
 
-    /** step list */
-    val steps: StepHolder = StepHolder()
-
-    /** flow list */
-    val flows: FlowHolder = FlowHolder()
+    /** sub element list */
+    val elements: ElementHolder = ElementHolder()
 
     /** add job leve listener */
     inline fun <reified T : JobListener> listener() {
@@ -35,13 +32,13 @@ class Job(val id: String) : Properties {
         val step = StepBuilder(name, next)
                 .apply(init)
                 .step ?: throw IllegalStateException("must be set batchlet or chunk.")
-        steps.add(step)
+        elements.add(step)
     }
 
     // ****************************** flow
     inline fun flow(name: String, next: String? = null, init: FlowBuilder.() -> Unit) {
         val flow = FlowBuilder(name, next).apply(init).flow
-        flows.add(flow)
+        elements.add(flow)
     }
 
     fun build(): String {
@@ -49,8 +46,7 @@ class Job(val id: String) : Properties {
         xml.append("<job id='${id}' restartable='$restartable' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>")
         xml.append(buildProperties())
         xml.append(listeners.buildListeners())
-        xml.append(steps.buildStep())
-        xml.append(flows.buildFlow())
+        xml.append(elements.build())
         xml.append("</job>")
         return xml.toString()
     }

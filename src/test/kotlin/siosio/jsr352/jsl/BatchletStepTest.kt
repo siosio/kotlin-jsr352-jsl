@@ -31,7 +31,7 @@ class BatchletStepTest {
         assertThat(job)
                 .hasFieldOrPropertyWithValue("id", "sample-job")
 
-        assertThat(job.steps)
+        assertThat(job.elements)
                 .hasSize(1)
                 .element(0)
                 .hasFieldOrPropertyWithValue("properties", listOf(
@@ -65,10 +65,10 @@ class BatchletStepTest {
         assertThat(job)
                 .hasFieldOrPropertyWithValue("id", "multi-step")
 
-        assertThat(job.steps)
+        assertThat(job.elements)
                 .hasSize(2)
 
-        assertThat(job.steps)
+        assertThat(job.elements)
                 .element(0)
                 .hasFieldOrPropertyWithValue("properties", listOf(
                         Property("key", "value")
@@ -76,7 +76,7 @@ class BatchletStepTest {
                 .extracting("name", "nextStep", "batchletClass")
                 .containsExactly("first", "second", TestBatchlet::class)
 
-        assertThat(job.steps)
+        assertThat(job.elements)
                 .element(1)
                 .hasFieldOrPropertyWithValue("properties", listOf<Property>())
                 .extracting("name", "nextStep", "batchletClass")
