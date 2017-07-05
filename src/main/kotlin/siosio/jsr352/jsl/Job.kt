@@ -1,22 +1,23 @@
 package siosio.jsr352.jsl
 
-import javax.batch.api.*
 import javax.batch.api.listener.*
-import kotlin.reflect.*
 
 class Job(val id: String) : Properties {
 
     /** job level properties */
     override val properties: MutableList<Property> = mutableListOf()
 
-    /** step list */
-    var steps: MutableList<Step> = mutableListOf()
-
     /** job level listeners */
     var listeners: Listeners<JobLevelListener> = Listeners()
 
     /** restartable atribute(default true) */
     var restartable: Boolean = true
+
+    /** step list */
+    val steps: StepHolder = StepHolder()
+
+    /** flow list */
+    val flows: FlowHolder = FlowHolder()
 
     /** add job leve listener */
     inline fun <reified T : JobListener> listener() {
@@ -30,28 +31,17 @@ class Job(val id: String) : Properties {
         listeners.add(jobLevelListener)
     }
 
-    // ****************************** batchlet
-    inline fun <reified T : Batchlet> batchlet(name: String, nextStep: String? = null) {
-        batchlet<T>(name, nextStep) {}
-    }
-
-    inline fun <reified T : Batchlet> batchlet(name: String, nextStep: String? = null, init: BatchletStep<*>.() -> Unit) {
-        val step = BatchletStep(
-            name = name,
-            nextStep = nextStep,
-            batchletClass = T::class)
-        step.init()
+    fun step(name: String, next: String? = null, init: StepBuilder.() -> Unit) {
+        val step = StepBuilder(name, next)
+                .apply(init)
+                .step ?: throw IllegalStateException("must be set batchlet or chunk.")
         steps.add(step)
     }
 
-    // ****************************** chunk
-    fun chunk(name: String, next: String? = null, init: ChunkStep.() -> Unit) {
-        val step = ChunkStep(
-            name = name,
-            nextStep = next
-        )
-        step.init()
-        steps.add(step)
+    // ****************************** flow
+    inline fun flow(name: String, next: String? = null, init: FlowBuilder.() -> Unit) {
+        val flow = FlowBuilder(name, next).apply(init).flow
+        flows.add(flow)
     }
 
     fun build(): String {
@@ -59,18 +49,9 @@ class Job(val id: String) : Properties {
         xml.append("<job id='${id}' restartable='$restartable' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>")
         xml.append(buildProperties())
         xml.append(listeners.buildListeners())
-        xml.append(buildStep())
+        xml.append(steps.buildStep())
+        xml.append(flows.buildFlow())
         xml.append("</job>")
-        return xml.toString()
-    }
-
-    private fun buildStep(): String {
-        val xml = StringBuilder()
-        steps.map {
-            it.build()
-        }.forEach {
-            xml.append(it)
-        }
         return xml.toString()
     }
 }

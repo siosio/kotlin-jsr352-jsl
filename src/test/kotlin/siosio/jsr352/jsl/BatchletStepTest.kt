@@ -15,13 +15,15 @@ class BatchletStepTest {
             override val job: Job
                 get() =
                 job("sample-job") {
-                    batchlet<TestBatchlet>("test-step") {
-                        property("key1", "value1")
-                        property("key2", "value2")
+                    step("test-step") {
+                        batchlet<TestBatchlet> {
+                            property("key1", "value1")
+                            property("key2", "value2")
 
-                        end(on = "*")
-                        fail(on = "fail", exitStatus = "failed")
-                        stop(on = "stop", restart = "step3")
+                            end(on = "*")
+                            fail(on = "fail", exitStatus = "failed")
+                            stop(on = "stop", restart = "step3")
+                        }
                     }
                 }
         }.job
@@ -48,13 +50,15 @@ class BatchletStepTest {
             override val job: Job
                 get() =
                 job("multi-step") {
-                    batchlet<TestBatchlet>(
-                            name = "first",
-                            nextStep = "second") {
-                        property("key", "value")
+                    step("first", "second") {
+                        batchlet<TestBatchlet>() {
+                            property("key", "value")
+                        }
                     }
 
-                    batchlet<TestBatchlet>("second")
+                    step("second") {
+                        batchlet<TestBatchlet>()
+                    }
                 }
         }.job
 
@@ -85,7 +89,9 @@ class BatchletStepTest {
             override val job: Job
                 get() =
                 job("invalid-job") {
-                    batchlet<InvalidBatchldet>(name = "invalid") {}
+                    step(name = "invalid") {
+                        batchlet<InvalidBatchldet>()
+                    }
                 }
         }
 

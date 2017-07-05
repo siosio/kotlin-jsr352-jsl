@@ -6,16 +6,13 @@ class MultiStepJob : JobBuilder {
     override val job: Job
         get() = job("multiple-step") {
 
-            batchlet<MultiStepBatchlet>(
-                    name = "1",
-                    nextStep = "2"
-            ) {
+            step(name = "1", next = "2") {
+                batchlet<MultiStepBatchlet>()
             }
 
-            batchlet<MultiStepBatchlet>(
-                    name = "2"
-            )
-
+            step(name = "2") {
+                batchlet<MultiStepBatchlet>()
+            }
         }
 }
 

@@ -10,37 +10,39 @@ class ChunkStepTest {
     @Test
     fun readerAndWriter() {
         val job = object : JobBuilder {
-          override val job: Job
-            get() =
-            job("sample-job") {
-              chunk("chunk-step") {
-                itemCount = 100
-                timeLimit = 1000
-                skipLimit = 2
-                retryLimit = 3
-                reader<TestReader>()
-                processor<TestProcessor>()
-                writer<TestWriter>()
-              }
-            }
+            override val job: Job
+                get() =
+                job("sample-job") {
+                    step("chunk-step") {
+                        chunk {
+                            itemCount = 100
+                            timeLimit = 1000
+                            skipLimit = 2
+                            retryLimit = 3
+                            reader<TestReader>()
+                            processor<TestProcessor>()
+                            writer<TestWriter>()
+                        }
+                    }
+                }
         }.job
 
         assertThat(job)
-            .hasFieldOrPropertyWithValue("id", "sample-job")
+                .hasFieldOrPropertyWithValue("id", "sample-job")
 
         assertThat(job.steps.first())
-            .hasFieldOrPropertyWithValue("name", "chunk-step")
-            .hasFieldOrPropertyWithValue("itemCount", 100)
-            .hasFieldOrPropertyWithValue("timeLimit", 1000)
-            .hasFieldOrPropertyWithValue("skipLimit", 2)
-            .hasFieldOrPropertyWithValue("reader", Item("reader", TestReader::class))
-            .hasFieldOrPropertyWithValue("processor", Item("processor", TestProcessor::class))
-            .hasFieldOrPropertyWithValue("writer", Item("writer", TestWriter::class))
+                .hasFieldOrPropertyWithValue("name", "chunk-step")
+                .hasFieldOrPropertyWithValue("itemCount", 100)
+                .hasFieldOrPropertyWithValue("timeLimit", 1000)
+                .hasFieldOrPropertyWithValue("skipLimit", 2)
+                .hasFieldOrPropertyWithValue("reader", Item("reader", TestReader::class))
+                .hasFieldOrPropertyWithValue("processor", Item("processor", TestProcessor::class))
+                .hasFieldOrPropertyWithValue("writer", Item("writer", TestWriter::class))
 
         val xml = job.build()
         assertThat(xml)
-            // language=xml
-            .isXmlEqualTo("""
+                // language=xml
+                .isXmlEqualTo("""
             <job id='sample-job' restartable='true' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
               <step id="chunk-step" allow-start-if-complete='false' >
                 <chunk item-count='100' time-limit='1000' skip-limit='2' retry-limit='3'>
@@ -56,28 +58,30 @@ class ChunkStepTest {
     @Test
     fun readerAndWriterWithProperties() {
         val job = object : JobBuilder {
-          override val job: Job
-            get() =
-            job("sample-job") {
-              chunk("chunk-step") {
-                reader<TestReader> {
-                  property("key", "value")
-                }
+            override val job: Job
+                get() =
+                job("sample-job") {
+                    step("chunk-step") {
+                        chunk {
+                            reader<TestReader> {
+                                property("key", "value")
+                            }
 
-                processor<TestProcessor> {
-                  property("prop", "prop-value")
-                }
+                            processor<TestProcessor> {
+                                property("prop", "prop-value")
+                            }
 
-                writer<TestWriter> {
-                  property("key2", "value2")
+                            writer<TestWriter> {
+                                property("key2", "value2")
+                            }
+                        }
+                    }
                 }
-              }
-            }
         }.job
 
         assertThat(job.build())
-            // language=xml
-            .isXmlEqualTo("""
+                // language=xml
+                .isXmlEqualTo("""
             <job id='sample-job' restartable='true' xmlns='http://xmlns.jcp.org/xml/ns/javaee' version='1.0'>
               <step id="chunk-step" allow-start-if-complete='false'>
                 <chunk item-count='10' time-limit='0'>

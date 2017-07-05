@@ -71,10 +71,13 @@ class XmlBuildTest {
                 get() =
                 job("sample-job") {
                     restartable = false
-                    batchlet<TestBatchlet>("my-step") {
-                        end(on = "*", exitStatus = "ok")
-                        fail(on = "failed", exitStatus = "ng")
-                        stop(on = "stop", restart = "my-step")
+
+                    step(name = "my-step") {
+                        batchlet<TestBatchlet> {
+                            end(on = "*", exitStatus = "ok")
+                            fail(on = "failed", exitStatus = "ng")
+                            stop(on = "stop", restart = "my-step")
+                        }
                     }
                 }
         }.job
@@ -100,10 +103,15 @@ class XmlBuildTest {
                 get() =
                 job("multiple-step") {
                     restartable = false
-                    batchlet<TestBatchlet>("first", "second")
-                    chunk("second") {
-                        reader<BuildTestReader>()
-                        writer<BuildTestWriter>()
+                    step(name = "first", next = "second") {
+                        batchlet<TestBatchlet>()
+                    }
+
+                    step(name = "second") {
+                        chunk {
+                            reader<BuildTestReader>()
+                            writer<BuildTestWriter>()
+                        }
                     }
                 }
         }.job

@@ -11,15 +11,19 @@ class SampleBatchletJob : JobBuilder {
                 property("property", "値")
             }
 
-            batchlet<SampleBatchlet>(name = "my-step", nextStep = "next-step") {
-                property("name", "hoge")
+            step(name="my-step", next = "next-step") {
+                batchlet<SampleBatchlet> {
+                    property("name", "hoge")
 
-                end(on = "ok", exitStatus = "end")
-                fail(on = "failed", exitStatus = "failed")
-                stop(on = "stop", exitStatus = "stop", restart = "restart-step")
+                    end(on = "ok", exitStatus = "end")
+                    fail(on = "failed", exitStatus = "failed")
+                    stop(on = "stop", exitStatus = "stop", restart = "restart-step")
+                }
             }
 
-            batchlet<SampleBatchlet2>("next-step")
+            step(name="next-step") {
+                batchlet<SampleBatchlet2>()
+            }
         }
 }
 
