@@ -1,6 +1,8 @@
 package siosio.jsr352.jsl.integration.batchlet
 
 import org.jboss.logging.*
+import java.util.*
+import java.util.concurrent.*
 import javax.batch.api.*
 import javax.batch.runtime.context.*
 import javax.enterprise.context.*

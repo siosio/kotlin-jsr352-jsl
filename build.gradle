@@ -19,17 +19,12 @@ repositories {
   mavenCentral()
 }
 
-configurations {
-  provided
-}
-
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-
-  provided 'javax:javaee-api:7.0'
-  provided 'org.jberet:jberet-core:1.2.2.Final'
+  compileOnly 'javax:javaee-api:7.0'
+  compileOnly 'org.jberet:jberet-core:1.2.0.Final'
 
   // test
   testCompile 'org.assertj:assertj-core:3.6.2'
@@ -44,17 +39,16 @@ dependencies {
 
 }
 
-idea.module {
-  scopes.PROVIDED.plus += [ configurations.provided ]
-  testOutputDir = sourceSets.test.output.classesDir
+sourceSets {
+  test.compileClasspath += configurations.compileOnly
+  test.runtimeClasspath += configurations.compileOnly
 }
 
-sourceSets {
-  main.compileClasspath += configurations.provided
-  test.compileClasspath += configurations.provided
-  test.runtimeClasspath += configurations.provided
+idea.module {
+  outputDir = sourceSets.main.java.outputDir
+  testOutputDir = sourceSets.test.java.outputDir
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '3.4'
+  gradleVersion = '4.0.2'
 }
